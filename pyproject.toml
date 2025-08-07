@@ -1,0 +1,29 @@
+[tool.ruff]
+# A string or list of strings to use as file path globs.
+# By default, Ruff lint all files in the current directory.
+src = ["."]
+# Set the line length for both the linter and formatter.
+line-length = 88
+# Target the minimum Python version to support.
+target-version = "py310"
+
+[tool.ruff.lint]
+# Select the linter rules to enable.
+# "E" for pycodestyle errors, "F" for pyflakes errors, "I" for isort import sorting rules.
+select = ["E", "F", "I"]
+# Ignore specific rules.
+ignore = ["E501"] # Ignore line length errors as Ruff's formatter handles this.
+
+[tool.ruff.format]
+# The formatter handles code formatting and import sorting.
+# No special configuration is usually needed here.
+# By default, it will respect the `line-length` from the main `[tool.ruff]` section.
+
+[tool.black]
+line-length = 88
+target-version = ['py310']
+
+[tool.isort]
+# Use the "black" profile to ensure compatibility.
+profile = "black"
+line_length = 88

@@ -1,0 +1,21 @@
+repos:
+- repo: https://github.com/astral-sh/ruff-pre-commit
+  rev: v0.12.7  # Or the latest version
+  hooks:
+    # Run the linter, with auto-fix enabled.
+    - id: ruff-check
+      args: ["--fix", "--exit-zero"]
+    # Run the formatter.
+    - id: ruff-format
+- repo: https://github.com/PyCQA/isort
+  rev: 6.0.1 # Use the latest stable version
+  hooks:
+    - id: isort
+      name: isort (python)
+      # Arguments to use the 'black' profile
+      args: ["--profile", "black"]
+      
+- repo: https://github.com/psf/black
+  rev: 25.1.0 # Use the latest stable version
+  hooks:
+    - id: black

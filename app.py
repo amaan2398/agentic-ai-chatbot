@@ -1,0 +1,131 @@
+import json
+
+import streamlit as st
+from langchain_core.messages import HumanMessage, ToolMessage
+
+from utils.generic import *
+
+# Initialize Streamlit app configuration
+st.set_page_config(
+    page_title="Restaurant Recommendation ChatBot", page_icon="🍽️", layout="wide"
+)
+
+# Header
+st.title("Restaurant Recommendation ChatBot 🍽️")
+
+if "messages" not in st.session_state:
+    st.session_state.messages = []
+
+# Iterate through the messages in session_state and display them.
+for message in st.session_state.messages:
+    # Use st.chat_message to display messages, distinguishing between 'user' and 'assistant'.
+    with st.chat_message(message["role"]):
+        if message.get("type", "generic") == "generic":
+            st.markdown(message["content"])
+
+
+def render_restaurant_card(restaurant):
+    """Returns the HTML string for a single restaurant card, now with an interactive map using an iframe."""
+
+    # Build address from location components
+    location = restaurant["location"]
+    address = f"{location['address1']}, {location['city']}, {location['state']} {location['zip_code']}"
+
+    # The URL for Google Maps embeds
+    iframe_url = f"https://maps.google.com/maps?q={address}&output=embed"
+    maps_link = f"http://maps.google.com/?q={address}"
+
+    return f"""
+        <div style="
+            border: 1px solid var(--border-color);
+            background-color: var(--secondary-background-color);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 5px;
+            min-width: 300px;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        ">
+            <h4><a href="{maps_link}" target="_blank" style="text-decoration: none; color: var(--text-color);">{restaurant["name"]}</a></h4>
+            <div style="
+                border-radius: 8px;
+                overflow: hidden;
+                margin-top: 10px;
+                margin-bottom: 10px;
+            ">
+                <iframe
+                    src="{iframe_url}"
+                    style="border:0;"
+                    width="100%"
+                    height="150"
+                    allowfullscreen=""
+                    loading="lazy"
+                    referrerpolicy="no-referrer">
+                </iframe>
+            </div>
+            <p style="margin-top: 0; color: var(--text-color);"><strong>⭐ Rating:</strong> {restaurant["rating"]}</p>
+            <p style="color: var(--text-color);"><strong>📍 Address:</strong> {address}</p>
+            <p style="color: var(--text-color);"><strong>💰 Price:</strong> {restaurant["price"]}</p>
+            <p style="color: var(--text-color);"><strong>📞 Phone:</strong> {restaurant["display_phone"]}</p>
+            <p style="color: var(--text-color);"><strong>🍽️ Cuisine:</strong> {", ".join([cat["title"] for cat in restaurant["categories"]])}</p>
+        </div>
+    """
+
+
+def get_llm():
+    """Get or create LLM using session state"""
+    if "llm" not in st.session_state:
+        with st.spinner("Initializing AI model..."):
+            st.session_state.llm = init_and_load_env()
+    return st.session_state.llm
+
+
+# In your main app code
+llm = get_llm()
+if prompt := st.chat_input("What's on your mind?"):
+    st.session_state.messages.append({"role": "user", "content": prompt})
+
+    # Display the user message immediately
+    with st.chat_message("user"):
+        st.markdown(prompt)
+
+    with st.chat_message("assistant"):
+        with st.spinner("Thinking..."):
+            message = []
+            message.append(HumanMessage(content=prompt))
+
+            st.markdown("**Processing your request...**")
+            # Generate response using the LLM
+            st.markdown(llm.get_prompts())
+            response = llm.invoke({"messages": message})
+            content = response["messages"][-1]
+
+            if isinstance(content, ToolMessage):
+                st.markdown("### 🍴 Recommended Restaurants")
+                # Container for the horizontally scrolling cards
+                restaurants = json.loads(content.content)
+                card_html = "".join([render_restaurant_card(r) for r in restaurants])
+                st.markdown(
+                    f"""
+                    <div style="
+                        display: flex;
+                        flex-direction: row;
+                        overflow-x: auto;
+                        padding: 10px 0;
+                        -webkit-overflow-scrolling: touch; /* For smoother scrolling on iOS */
+                        scrollbar-width: thin; /* For Firefox */
+                        scrollbar-color: #A9A9A9 #F1F0F0; /* For Firefox */
+                    ">
+                        {card_html}
+
+                    """,
+                    unsafe_allow_html=True,
+                )
+            st.toast("Processing complete!🚀")
+            if not isinstance(content, ToolMessage):
+                st.markdown(content.content)
+                st.session_state.messages.append(
+                    {"role": "assistant", "content": content.content}
+                )
