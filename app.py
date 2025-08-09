@@ -1,7 +1,7 @@
 import json
 
 import streamlit as st
-from langchain_core.messages import HumanMessage, ToolMessage
+from langchain_core.messages import AIMessage, HumanMessage, SystemMessage, ToolMessage
 
 from utils.generic import *
 
@@ -84,48 +84,57 @@ def get_llm():
 
 # In your main app code
 llm = get_llm()
-if prompt := st.chat_input("What's on your mind?"):
-    st.session_state.messages.append({"role": "user", "content": prompt})
 
+if "chat_state" not in st.session_state:
+    base_prompt = load_prompt_from_file(r"static/prompts/base.txt")
+    st.session_state.chat_state = {"messages": [SystemMessage(content=base_prompt)]}
+
+if prompt := st.chat_input("What's on your mind?"):
+    # st.session_state.messages.append({"role": "user", "content": prompt})
+    print("st.session_state.chat_state:", st.session_state.chat_state)
+    st.session_state.chat_state["messages"].append(HumanMessage(content=prompt))
     # Display the user message immediately
-    with st.chat_message("user"):
-        st.markdown(prompt)
+    st.chat_message("user").write(prompt)
 
     with st.chat_message("assistant"):
-        with st.spinner("Thinking..."):
-            message = []
-            message.append(HumanMessage(content=prompt))
-
-            st.markdown("**Processing your request...**")
+        response_container = st.empty()
+        for chunk in llm.stream(st.session_state.chat_state):
             # Generate response using the LLM
-            st.markdown(llm.get_prompts())
-            response = llm.invoke({"messages": message})
-            content = response["messages"][-1]
+            print("chunk:", chunk)
+            if chunk.get("chatbot"):
+                last_msg = chunk["chatbot"]["messages"][-1]
+                st.session_state.chat_state["messages"].append(last_msg)
 
-            if isinstance(content, ToolMessage):
-                st.markdown("### 🍴 Recommended Restaurants")
-                # Container for the horizontally scrolling cards
-                restaurants = json.loads(content.content)
-                card_html = "".join([render_restaurant_card(r) for r in restaurants])
-                st.markdown(
-                    f"""
-                    <div style="
-                        display: flex;
-                        flex-direction: row;
-                        overflow-x: auto;
-                        padding: 10px 0;
-                        -webkit-overflow-scrolling: touch; /* For smoother scrolling on iOS */
-                        scrollbar-width: thin; /* For Firefox */
-                        scrollbar-color: #A9A9A9 #F1F0F0; /* For Firefox */
-                    ">
-                        {card_html}
+                # Display latest AI message
+                if isinstance(last_msg, AIMessage):
+                    response_container.write(last_msg.content)
+            elif chunk.get("tools"):
+                last_msg = chunk["tools"]["messages"][-1]
+                st.session_state.chat_state["messages"] = st.session_state.chat_state[
+                    "messages"
+                ][:1]
 
-                    """,
-                    unsafe_allow_html=True,
-                )
-            st.toast("Processing complete!🚀")
-            if not isinstance(content, ToolMessage):
-                st.markdown(content.content)
-                st.session_state.messages.append(
-                    {"role": "assistant", "content": content.content}
-                )
+                # Display latest AI message
+                if isinstance(last_msg, ToolMessage):
+                    st.markdown("### 🍴 Recommended Restaurants")
+                    # Container for the horizontally scrolling cards
+                    restaurants = json.loads(last_msg.content)
+                    card_html = "".join(
+                        [render_restaurant_card(r) for r in restaurants]
+                    )
+                    st.markdown(
+                        f"""
+                        <div style="
+                            display: flex;
+                            flex-direction: row;
+                            overflow-x: auto;
+                            padding: 10px 0;
+                            -webkit-overflow-scrolling: touch; /* For smoother scrolling on iOS */
+                            scrollbar-width: thin; /* For Firefox */
+                            scrollbar-color: #A9A9A9 #F1F0F0; /* For Firefox */
+                        ">
+                            {card_html}
+
+                        """,
+                        unsafe_allow_html=True,
+                    )

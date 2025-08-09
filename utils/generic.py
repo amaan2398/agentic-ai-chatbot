@@ -3,7 +3,6 @@ from typing import Annotated
 
 from dotenv import load_dotenv
 from langchain.tools import tool
-from langchain_core.messages import AnyMessage
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langgraph.graph import END, START, StateGraph
 from langgraph.graph.message import add_messages
@@ -22,7 +21,7 @@ class DataSummarizationToolInput(BaseModel):
 
 
 class State(TypedDict):
-    messages: Annotated[list[AnyMessage], add_messages]
+    messages: Annotated[list, add_messages]
 
 
 def load_prompt_from_file(file_path: str) -> str:
@@ -125,23 +124,20 @@ def init_and_load_env():
     llm_with_tools = llm.bind_tools(tools=tools)
 
     # Node definition for the tool invocation
-    def tools_calling_llm(state: State):
+    def chatbot(state: State):
         return {"messages": [llm_with_tools.invoke(state["messages"])]}
 
     # Build the graph
     builder = StateGraph(State)
-    builder.add_node("tool_calling_llm", tools_calling_llm)
-    builder.add_node("tools", ToolNode(tools))
+    builder.add_node("chatbot", chatbot)
+    builder.add_edge(START, "chatbot")
+    builder.add_node("tools", ToolNode(tools=tools))
 
     ## adding edges
-    builder.add_edge(START, "tool_calling_llm")
-    builder.add_conditional_edges(
-        "tool_calling_llm",
-        tools_condition,
-    )
-    builder.add_edge("tools", END)
+    builder.add_conditional_edges("chatbot", tools_condition)
+    builder.add_edge("tools", "chatbot")
+    builder.add_edge("chatbot", END)
 
     graph = builder.compile()
-    # base_prompt = load_prompt_from_file(r"static/prompts/base.txt")
-    # graph.invoke({"messages": [llm_with_tools.invoke(base_prompt)]})
+
     return graph
