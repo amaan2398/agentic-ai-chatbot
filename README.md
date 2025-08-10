@@ -49,6 +49,32 @@ For location-based and local business queries, the chatbot uses the **Yelp Fusio
 
 ---
 
+## 📸 Screenshots in Action
+
+Here is a gallery of the chatbot handling various requests, showcasing the agentic workflow and API integrations.
+
+### Movie Search (TMDB Integration)
+
+**Initial movie query and the agent's response using the TMDB tool.**
+![Chatbot fetching movie details from TMDB](static/screenshots/screenshot2.png)
+
+### Local Business Search (Yelp Integration)
+
+**Searching for cafes and getting detailed results from the Yelp API.**
+![Chatbot searching for cafes using Yelp](static/screenshots/screenshot1.png)
+
+### Follow-up and Contextual Conversation
+
+**The chatbot remembers the context and provides a phone number for a previously found business.**
+![Chatbot providing contact details in a follow-up query](static/screenshots/screenshot3.png)
+
+### Handling Multiple Tools
+
+**The agent correctly identifies that it cannot handle a request outside its toolset and responds appropriately.**
+![Chatbot handling a request it cannot fulfill](static/screenshots/screenshot4.png)
+
+---
+
 ## 🚀 Getting Started
 
 Follow these instructions to get a copy of the project up and running on your local machine.
