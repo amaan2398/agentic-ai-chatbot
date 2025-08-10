@@ -56,22 +56,22 @@ Here is a gallery of the chatbot handling various requests, showcasing the agent
 ### Movie Search (TMDB Integration)
 
 **Initial movie query and the agent's response using the TMDB tool.**
-![Chatbot fetching movie details from TMDB](static/screenshots/screenshot2.png)
+![Chatbot fetching movie details from TMDB](https://raw.githubusercontent.com/amaan2398/agentic-ai-chatbot/main/static/screenshots/screenshot2.png)
 
 ### Local Business Search (Yelp Integration)
 
 **Searching for cafes and getting detailed results from the Yelp API.**
-![Chatbot searching for cafes using Yelp](static/screenshots/screenshot1.png)
+![Chatbot searching for cafes using Yelp](https://raw.githubusercontent.com/amaan2398/agentic-ai-chatbot/main/static/screenshots/screenshot1.png)
 
 ### Follow-up and Contextual Conversation
 
 **The chatbot remembers the context and provides a phone number for a previously found business.**
-![Chatbot providing contact details in a follow-up query](static/screenshots/screenshot3.png)
+![Chatbot providing contact details in a follow-up query](https://raw.githubusercontent.com/amaan2398/agentic-ai-chatbot/main/static/screenshots/screenshot3.png)
 
 ### Handling Multiple Tools
 
 **The agent correctly identifies that it cannot handle a request outside its toolset and responds appropriately.**
-![Chatbot handling a request it cannot fulfill](static/screenshots/screenshot4.png)
+![Chatbot handling a request it cannot fulfill](https://raw.githubusercontent.com/amaan2398/agentic-ai-chatbot/main/static/screenshots/screenshot4.png)
 
 ---
 
