@@ -7,11 +7,11 @@ from utils.generic import *
 
 # Initialize Streamlit app configuration
 st.set_page_config(
-    page_title="Restaurant Recommendation ChatBot", page_icon="🍽️", layout="wide"
+    page_title="Restaurant and Movie Recommendation ChatBot", page_icon="🤖", layout="wide"
 )
 
 # Header
-st.title("Restaurant Recommendation ChatBot 🍽️")
+st.title("Restaurant and Movie Recommendation ChatBot 🤖")
 
 if "messages" not in st.session_state:
     st.session_state.messages = []
@@ -23,10 +23,46 @@ for message in st.session_state.messages:
         if message.get("type", "generic") == "generic":
             st.markdown(message["content"])
 
+def render_movie_card(movie):
+    """Returns the HTML string for a single movie card with poster image."""
+
+    title = movie["title"]
+    rating = movie["rating"]
+    language = movie["language"]
+    poster_img = movie["poster-img"]
+
+    return f"""
+        <div style="
+            border: 1px solid var(--border-color);
+            background-color: var(--secondary-background-color);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 5px;
+            min-width: 250px;
+            max-width: 300px;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            color: var(--text-color);
+        ">
+            <h4>🎬 {title}</h4>
+            <div style="
+                border-radius: 8px;
+                overflow: hidden;
+                margin-bottom: 10px;
+                text-align: center;
+            ">
+                <img src="{poster_img}" alt="{title} Poster" style="width: 100%; height: auto; display: block;">
+            </div>
+            <p style="margin: 4px 0;"><strong>⭐ Rating:</strong> {rating:.1f}</p>
+            <p style="margin: 4px 0;"><strong>🌎 Language:</strong> {language.upper()}</p>
+        </div>
+    """
 
 def render_restaurant_card(restaurant):
     """Returns the HTML string for a single restaurant card, now with an interactive map using an iframe."""
-
+    print("Restaurant data:", restaurant)
     # Build address from location components
     location = restaurant["location"]
     address = f"{location['address1']}, {location['city']}, {location['state']} {location['zip_code']}"
@@ -65,11 +101,11 @@ def render_restaurant_card(restaurant):
                     referrerpolicy="no-referrer">
                 </iframe>
             </div>
-            <p style="margin-top: 0; color: var(--text-color);"><strong>⭐ Rating:</strong> {restaurant["rating"]}</p>
+            <p style="margin-top: 0; color: var(--text-color);"><strong>⭐ Rating:</strong> {restaurant.get("rating", "N/A")}</p>
             <p style="color: var(--text-color);"><strong>📍 Address:</strong> {address}</p>
-            <p style="color: var(--text-color);"><strong>💰 Price:</strong> {restaurant["price"]}</p>
-            <p style="color: var(--text-color);"><strong>📞 Phone:</strong> {restaurant["display_phone"]}</p>
-            <p style="color: var(--text-color);"><strong>🍽️ Cuisine:</strong> {", ".join([cat["title"] for cat in restaurant["categories"]])}</p>
+            <p style="color: var(--text-color);"><strong>💰 Price:</strong> {restaurant.get("price", "N/A")}</p>
+            <p style="color: var(--text-color);"><strong>📞 Phone:</strong> {restaurant.get("display_phone", "N/A")}</p>
+            <p style="color: var(--text-color);"><strong>🍽️ Cuisine:</strong> {", ".join([cat["title"] for cat in restaurant.get("categories", [])])}</p>
         </div>
     """
 
@@ -110,12 +146,37 @@ if prompt := st.chat_input("What's on your mind?"):
                     response_container.write(last_msg.content)
             elif chunk.get("tools"):
                 last_msg = chunk["tools"]["messages"][-1]
+                tool_name = last_msg.name
                 st.session_state.chat_state["messages"] = st.session_state.chat_state[
                     "messages"
                 ][:1]
-
+                
                 # Display latest AI message
-                if isinstance(last_msg, ToolMessage):
+                if tool_name == "get_movie_recommendations":
+                    st.markdown("### 🎞️ Recommended Movies")
+                    # Container for the horizontally scrolling cards
+                    movies = json.loads(last_msg.content)['recommendations']
+                    card_html = "".join(
+                        [render_movie_card(r) for r in movies]
+                    )
+                    st.markdown(
+                        f"""
+                        <div style="
+                            display: flex;
+                            flex-direction: row;
+                            overflow-x: auto;
+                            padding: 10px 0;
+                            -webkit-overflow-scrolling: touch; /* For smoother scrolling on iOS */
+                            scrollbar-width: thin; /* For Firefox */
+                            scrollbar-color: #A9A9A9 #F1F0F0; /* For Firefox */
+                        ">
+                            {card_html}
+                        
+
+                        """,
+                        unsafe_allow_html=True,
+                    )
+                if tool_name == "restaurant_search":
                     st.markdown("### 🍴 Recommended Restaurants")
                     # Container for the horizontally scrolling cards
                     restaurants = json.loads(last_msg.content)
