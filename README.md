@@ -1,6 +1,11 @@
 # Agentic AI Chatbot
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![Built with LangChain](https://img.shields.io/badge/Built%20with-LangChain-purple)](https://www.langchain.com/)
+[![Python Version](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
+[![Built with LangGraph](https://img.shields.io/badge/Built%20with-LangGraph-1de9b6)](https://langchain-ai.github.io/langgraph/)
+
 
 An intelligent, agentic AI chatbot capable of understanding complex queries and performing actions by integrating with various third-party APIs. This chatbot can fetch movie information, find local businesses, and more. 🤖
 
@@ -49,29 +54,55 @@ For location-based and local business queries, the chatbot uses the **Yelp Fusio
 
 ---
 
-## 📸 Screenshots in Action
+## 📸 Chatbot in Action: Conversational Flows
 
-Here is a gallery of the chatbot handling various requests, showcasing the agentic workflow and API integrations.
+Here’s a look at how the chatbot handles real-world scenarios, from a simple greeting to complex, multi-step queries.
 
-### Movie Search (TMDB Integration)
+### 1. Simple Greeting
 
-**Initial movie query and the agent's response using the TMDB tool.**
-![Chatbot fetching movie details from TMDB](https://raw.githubusercontent.com/amaan2398/agentic-ai-chatbot/main/static/screenshots/screenshot2.png)
+The conversation starts with a simple, natural interaction.
 
-### Local Business Search (Yelp Integration)
+![Chatbot greeting the user](https://github.com/amaan2398/agentic-ai-chatbot/blob/main/static/screenshots/Hello%20Screen.png)
 
-**Searching for cafes and getting detailed results from the Yelp API.**
-![Chatbot searching for cafes using Yelp](https://raw.githubusercontent.com/amaan2398/agentic-ai-chatbot/main/static/screenshots/screenshot1.png)
+### 2. Movie Suggestions (Multi-Step Query)
 
-### Follow-up and Contextual Conversation
+This example showcases how the agent gathers information to provide personalized movie recommendations using **The Movie Database (TMDB)**.
 
-**The chatbot remembers the context and provides a phone number for a previously found business.**
-![Chatbot providing contact details in a follow-up query](https://raw.githubusercontent.com/amaan2398/agentic-ai-chatbot/main/static/screenshots/screenshot3.png)
+#### Step 1: Initial Request
 
-### Handling Multiple Tools
+The user asks for a recommendation without providing any context.
 
-**The agent correctly identifies that it cannot handle a request outside its toolset and responds appropriately.**
-![Chatbot handling a request it cannot fulfill](https://raw.githubusercontent.com/amaan2398/agentic-ai-chatbot/main/static/screenshots/screenshot4.png)
+![Chatbot asked for more clarity](https://github.com/amaan2398/agentic-ai-chatbot/blob/main/static/screenshots/Movie%20suggestion%20s-1.png)
+
+#### Step 2: Gathering Context & Delivering Results
+
+The user provides a movie they like. The agent uses this context to query the TMDB API and fetches detailed information, summarizing the results in a list.
+
+![Chatbot uses provided details and fetch data from TMDB and summarize and show in card formate](https://github.com/amaan2398/agentic-ai-chatbot/blob/main/static/screenshots/Movie%20suggestion%20s-2.png)
+
+### 3. Restaurant Recommendations (Complex Conversational Flow)
+
+This flow demonstrates the agent's ability to handle ambiguity by asking clarifying questions until it has enough information to use the **Yelp API**.
+
+#### Step 1: Vague Initial Request
+
+The user asks for restaurants but provides no specific details. The AI asks for the necessary information.
+
+![Chatbot asked for more clarity](https://github.com/amaan2398/agentic-ai-chatbot/blob/main/static/screenshots/Restaurant%20suggestion%20s-1.png)
+
+#### Step 2: Partial Information Provided
+
+The user provides some, but not all, of the required details. The AI recognizes what's missing and asks for it specifically.
+
+![Chatbot recognizes what's missing and asks for it specifically.](https://github.com/amaan2398/agentic-ai-chatbot/blob/main/static/screenshots/Restaurant%20suggestion%20s-2.png)
+
+#### Step 3: All Information Gathered & Action Executed
+
+The user provides the final piece of information. The agent now has everything it needs. It queries the Yelp API, retrieves a list of matching restaurants, and presents them with a helpful summary.
+
+![Chatbot searching for restaurants using Yelp](https://github.com/amaan2398/agentic-ai-chatbot/blob/main/static/screenshots/Restaurant%20suggestion%20s-3.png)
+
+
 
 ---
 
