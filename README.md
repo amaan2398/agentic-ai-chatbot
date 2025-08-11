@@ -55,6 +55,7 @@ For location-based and local business queries, the chatbot uses the **Yelp Fusio
 ## 🧠 How It Works: The Agentic Flow
 
 Below is a visualization of the core agentic graph:
+
 ![Chatbot Graph Visualization](https://github.com/amaan2398/agentic-ai-chatbot/blob/main/static/chatbot_lang_graph.png)
 
 
