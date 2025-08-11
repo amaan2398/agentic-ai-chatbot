@@ -50,6 +50,12 @@ For location-based and local business queries, the chatbot uses the **Yelp Fusio
     * Find the best local spots based on user preferences (e.g., "top-rated Italian restaurants in downtown").
 * **Usage Example:** A user query like, "I'm looking for a good place for dinner in Hyderabad" prompts the agent to use the Yelp tool to search for highly-rated restaurants in that city.
 
+---
+
+## 🧠 How It Works: The Agentic Flow
+
+Below is a visualization of the core agentic graph:
+![Chatbot Graph Visualization](https://github.com/amaan2398/agentic-ai-chatbot/blob/main/static/chatbot_lang_graph.png)
 
 
 ---

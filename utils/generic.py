@@ -71,4 +71,11 @@ def init_and_load_env():
 
     graph = builder.compile()
 
+    # Get the PNG bytes from the Mermaid graph
+    png_bytes = graph.get_graph().draw_mermaid_png()
+
+    # Save to file
+    with open(r"./static/chatbot_lang_graph.png", "wb") as f:
+        f.write(png_bytes)
+    
     return graph
