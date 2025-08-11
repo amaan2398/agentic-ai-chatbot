@@ -172,6 +172,14 @@ You can now interact with the chatbot from your terminal.
 
 -----
 
+## Project Report
+
+For a detailed analysis of this project, including our methodology, findings, and final conclusions, please see the full project report. The document provides an in-depth look at the entire project lifecycle.
+
+📄 **[View the Full Project Report](https://github.com/amaan2398/agentic-ai-chatbot/blob/main/documents/Chatbot%20Project%20Report.pdf)**
+
+-----
+
 ## 🤝 Contributing
 
 Contributions are welcome\! If you have suggestions for improving the chatbot, please feel free to create a pull request or open an issue.
